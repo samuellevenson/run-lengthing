@@ -59,6 +59,7 @@ public class BitmapToRunLength {
           consec = 1;
         }
       }
+      //not necessary to write last value of consec, can be found by subtracting from total
       bwriter.write(consec+"!"); //the last value of consec does not write to file unless there is some character after it...(?)
       bwriter.close();
     } catch(IOException e) {
