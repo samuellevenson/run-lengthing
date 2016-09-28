@@ -4,11 +4,14 @@ import java.io.*;
 import javax.imageio.ImageIO;
 
 /**
- * Turns black and white images into a text file comtaining the run lengthing equivalent
+ * Turns black and white images into a text file comtaining the run lengthing equivalent.
  * Will not work if image file extension is not 3 letters long.
  * 
  * @author Samuel Levenson
- * @version 9/27, version info
+ * 
+ * @version 9/27: Changed class name, added ability to enter filepath as commandline argument, 
+ * got rid of loop part of making rgb array (there was a method build into image class), and
+ * added image height and first rgb color to textfile output.
  */
 public class BitmapToRunLength {
   public static void main(String[] args) {
@@ -62,9 +65,6 @@ public class BitmapToRunLength {
       System.out.println("Unable to output to file: " + e.getMessage());
     }
     System.out.println("Done.");
-    for(int i: rgbArray) {
-      System.out.print(i);
-    }
     System.exit(0); //progam does not finish without this (something about awt)
   }
 }
