@@ -28,6 +28,7 @@ public class BitmapToRunLength {
     BufferedImage image = null;
     try {
       image = ImageIO.read(new File(filepath));
+      System.out.println(image);
     } catch (IOException e) {
       System.out.println("Unable to read image: " + e.getMessage());
       System.exit(1);
@@ -60,13 +61,13 @@ public class BitmapToRunLength {
           consec = 1;
         }
       }
-      bwriter.write(consec+"!"); //the last value of consec does not write to file unless there is some character after it...(?)
+      bwriter.write(consec + ","); //the last value of consec does not write to file unless there is some character after it...(?)
       bwriter.close();
     } catch(IOException e) {
       System.out.println("Unable to output to file: " + e.getMessage());
       System.exit(1);
     }
     System.out.println("Done.");
-    System.exit(0); //progam does not finish without this (something about awt)
+    System.exit(0);
   }
 }
