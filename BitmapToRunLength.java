@@ -49,7 +49,8 @@ public class BitmapToRunLength {
       
       bwriter.write("Width " + image.getWidth() + "\n"); 
       bwriter.write("Height " + image.getHeight() + "\n"); 
-      bwriter.write("Firstcolor " + image.getRGB(0,0) + "\n"); //saves the image width, height, and first rgb color in the text file
+      String firstColor = (image.getRGB(0,0) == -1)? "White":"Black";
+      bwriter.write("Firstcolor " + firstColor + "\n"); //saves the image width, height, and first rgb color in the text file
       int consec = 1; // POSSIBLY START AT 0??
       for(int i = 1; i < rgbArray.length; i++) {
         if(rgbArray[i-1] == rgbArray[i]){
