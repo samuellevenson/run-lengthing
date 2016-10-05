@@ -6,7 +6,9 @@ import java.util.Scanner;
 import java.io.*;
 import javax.imageio.ImageIO;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -91,6 +93,7 @@ public class RunLengthBitmapConverter extends JPanel{
       
     } catch (IOException e) {
       System.out.println("Unable to read file: " + e.getMessage());
+      e.printStackTrace();
       System.exit(1);
     }
     File outputfile = new File(inputfile.getParentFile(),inputfile.getName().replace(".txt",".runlength") + ".bmp");
@@ -104,11 +107,13 @@ public class RunLengthBitmapConverter extends JPanel{
     }
     //show image
     JFrame imgframe = new JFrame();
-    imgframe.setSize(500, 500);
-    imgframe.getContentPane().add(new ShowImage());
+    // imgframe.setSize(500, 500);
+    //imgframe.getContentPane().add(new ShowImage());
+    imgframe.getContentPane().add(new JLabel(new ImageIcon(image)));
+    imgframe.pack();
     imgframe.setVisible(true);
-    Graphics g = image.getGraphics();
-    g.drawImage(image,0,0,null);
+    // Graphics g = image.getGraphics();
+    // g.drawImage(image,0,0,null);
     
     return outputfile;
   }
@@ -123,12 +128,12 @@ public class RunLengthBitmapConverter extends JPanel{
       System.exit(1);
     }
     //show image
+    // TODO: Extract into method since repeated twice
     JFrame imgframe = new JFrame();
-    imgframe.setSize(500, 500);
-    imgframe.getContentPane().add(new ShowImage());
+    // imgframe.setSize(500, 500);
+    imgframe.getContentPane().add(new JLabel(new ImageIcon(image)));
+    imgframe.pack();
     imgframe.setVisible(true);
-    Graphics g = image.getGraphics();
-    g.drawImage(image,0,0,null);
     
     int[] rgbArray = new int[image.getWidth()*image.getHeight()];
     image.getRGB(0,0,image.getWidth(),image.getHeight(),rgbArray,0,image.getWidth()); //puts rgb values of image into 1D array
