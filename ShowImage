@@ -9,7 +9,10 @@ import javax.imageio.ImageIO;
 import java.io.*;
 
 public class ShowImage extends JPanel {
-  
+  /**
+  * extra class that somehow is used to show images
+  * @version 10/4: first version
+  */
   public void paint(Graphics g) {
     File filepath = new File("/Users/sammy/Documents/compsi/compsci12th/testImages/dog.bmp");
     BufferedImage img = null;
