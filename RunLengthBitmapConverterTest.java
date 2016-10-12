@@ -24,6 +24,7 @@ public class RunLengthBitmapConverterTest extends TestCase{
   public void testReadRunLength() {
     BufferedImage image = null;
     try {
+      // Use relative path names so the tests will work on other computers: "testImages/dog.bmp"
       image = ImageIO.read(new File("/Users/sammy/Documents/compsi/compsci12th/testImages/dog.bmp"));
     } catch (IOException e) {
       System.exit(1);
