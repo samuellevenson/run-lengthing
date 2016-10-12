@@ -91,9 +91,9 @@ public class RunLengthBitmapConverter extends JPanel{
   }
   private static Color switchColor(Color orig) {
     if(orig.equals(Color.BLACK)) {
-      return new Color(255,255,255);
+      return new Color(255,255,255); // why not return Color.WHITE (instead of creating new color object)
     }
-    return new Color(0,0,0);
+    return new Color(0,0,0); // Color.BLACK
   }
   
   private static void showImage(BufferedImage image) {
@@ -147,6 +147,7 @@ public class RunLengthBitmapConverter extends JPanel{
       return output;
     } catch (IOException e) {
       System.out.println("Unable to create image: " + e.getMessage());
+      e.printStackTrace();
       System.exit(1);
     }
     return null;
@@ -178,6 +179,7 @@ public class RunLengthBitmapConverter extends JPanel{
       return output;
     } catch(IOException e) {
       System.out.println("Unable to output to file: " + e.getMessage());
+      e.printStackTrace();
       System.exit(1);
     }
     return null;
