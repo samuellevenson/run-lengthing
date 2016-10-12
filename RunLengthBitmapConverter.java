@@ -18,11 +18,11 @@ import javax.swing.JPanel;
  * 
  * @author Samuel Levenson
  * 
- * @version 10/5: Merged two previous classes into one class that converts both ways. 
- * Added option to choose file with jfilechooser; jfilechooser window only pops up the first time the program
- * is run after being opened.
- * Changed filename of .bmp images created to original.runlength
- * Displays images
+ * @version 10/11: 
+ * Created method for displaying image
+ * Created method for reading runlength file
+ * Created methods for writing to bitmap and runlength file
+ * Can now handle relative file names if file is in the same directory
  * 
  */
 public class RunLengthBitmapConverter extends JPanel{
@@ -41,17 +41,16 @@ public class RunLengthBitmapConverter extends JPanel{
     else {
       filepath = new File(args[0]);
     }
+    filepath = filepath.getAbsoluteFile();
     String filename = filepath.getName();
     if(filename.substring(filename.length()-3).equals("bmp")) {
       convertToRunLength(filepath);
       System.out.println("Done");
-      //System.exit(0);
     }
     
     else if(filename.substring(filename.length()-3).equals("txt")) {
       convertToBitmap(filepath);
       System.out.println("Done");
-      //System.exit(0);
     }
     
     else {
@@ -60,10 +59,53 @@ public class RunLengthBitmapConverter extends JPanel{
   }
   
   public static File convertToBitmap(File inputfile) {
+    BufferedImage image = readRunLength(inputfile);
+    File outputfile = new File(inputfile.getParent(), inputfile.getName().replace(".txt",".bmp"));
+    writeBitmap(outputfile,image);
+    showImage(image);
+    return outputfile;
+  }
+  
+  public static File convertToRunLength(File inputfile) {
     BufferedImage image = null;
     
     try {
-      Scanner input = new Scanner(inputfile);
+      image = ImageIO.read(inputfile);
+      System.out.println(image);
+    } catch (IOException e) {
+      System.out.println("Unable to read image: " + e.getMessage());
+      System.exit(1);
+    }
+    showImage(image);
+    
+    File outputfile = new File(inputfile.getParent(), inputfile.getName().replace(".bmp",".runlength.txt"));
+    try {
+      outputfile.createNewFile();
+    } catch (IOException e) {
+      System.out.println("Unable to create new file: " + e.getMessage());
+      System.exit(1);
+    }
+    
+    writeRunLength(inputfile, image);
+      return outputfile;
+  }
+  private static Color switchColor(Color orig) {
+    if(orig.equals(Color.BLACK)) {
+      return new Color(255,255,255);
+    }
+    return new Color(0,0,0);
+  }
+  
+  private static void showImage(BufferedImage image) {
+    JFrame imgframe = new JFrame();
+    imgframe.getContentPane().add(new JLabel(new ImageIcon(image)));
+    imgframe.pack();
+    imgframe.setVisible(true);
+  }
+  
+  public static BufferedImage readRunLength(File runlength) {
+    try {
+      Scanner input = new Scanner(runlength);
       
       input.skip("Width");
       int width = input.nextInt();
@@ -73,13 +115,13 @@ public class RunLengthBitmapConverter extends JPanel{
       Color currentColor = new Color(input.nextInt());
       input.skip("\n");
       input.useDelimiter(",");
-      image = new BufferedImage(width, height,BufferedImage.TYPE_BYTE_BINARY);
+      BufferedImage image = new BufferedImage(width, height,BufferedImage.TYPE_BYTE_BINARY);
       
       int col = 0;
       int row = 0;
       while(input.hasNextInt() == true) {
-        int runlength = input.nextInt();
-        for(int i = 0; i < runlength; i++) {
+        int run = input.nextInt();
+        for(int i = 0; i < run; i++) {
           image.setRGB(col,row,currentColor.getRGB());
           col++;
           if(col >= width) {
@@ -89,65 +131,33 @@ public class RunLengthBitmapConverter extends JPanel{
         }
         currentColor = switchColor(currentColor);
       }
-      System.out.println(image);
-      
+      return image;
     } catch (IOException e) {
       System.out.println("Unable to read file: " + e.getMessage());
       e.printStackTrace();
       System.exit(1);
     }
-    File outputfile = new File(inputfile.getParentFile(),inputfile.getName().replace(".txt",".runlength") + ".bmp");
+    return null;
+  }
+  
+  public static File writeBitmap(File output, BufferedImage image) {
     try {
-      
-      outputfile.createNewFile();
-      ImageIO.write(image, "bmp", outputfile);
+      output.createNewFile();
+      ImageIO.write(image, "bmp", output);
+      return output;
     } catch (IOException e) {
       System.out.println("Unable to create image: " + e.getMessage());
       System.exit(1);
     }
-    //show image
-    JFrame imgframe = new JFrame();
-    // imgframe.setSize(500, 500);
-    //imgframe.getContentPane().add(new ShowImage());
-    imgframe.getContentPane().add(new JLabel(new ImageIcon(image)));
-    imgframe.pack();
-    imgframe.setVisible(true);
-    // Graphics g = image.getGraphics();
-    // g.drawImage(image,0,0,null);
-    
-    return outputfile;
+    return null;
   }
   
-  public static File convertToRunLength(File inputfile) {
-    BufferedImage image = null;
-    try {
-      image = ImageIO.read(inputfile);
-      System.out.println(image);
-    } catch (IOException e) {
-      System.out.println("Unable to read image: " + e.getMessage());
-      System.exit(1);
-    }
-    //show image
-    // TODO: Extract into method since repeated twice
-    JFrame imgframe = new JFrame();
-    // imgframe.setSize(500, 500);
-    imgframe.getContentPane().add(new JLabel(new ImageIcon(image)));
-    imgframe.pack();
-    imgframe.setVisible(true);
+  public static File writeRunLength(File input, BufferedImage image) {
+    int[] rgbArray = rgbArray(image);
     
-    int[] rgbArray = new int[image.getWidth()*image.getHeight()];
-    image.getRGB(0,0,image.getWidth(),image.getHeight(),rgbArray,0,image.getWidth()); //puts rgb values of image into 1D array
-    
-    File outputfile = new File(inputfile.getParent() + "/" + inputfile.getName().replace(".bmp",".txt"));
+    File output = new File(input.getParent() + "/" + input.getName().replace(".bmp",".runlength.txt"));
     try {
-      outputfile.createNewFile();
-    } catch (IOException e) {
-      System.out.println("Unable to create new file: " + e.getMessage());
-      System.exit(1);
-    }
-    
-    try {
-      FileWriter fwriter = new FileWriter(inputfile.getParent() + "/" + inputfile.getName().replace(".bmp",".txt"));
+      FileWriter fwriter = new FileWriter(output);
       BufferedWriter bwriter = new BufferedWriter(fwriter);
       
       bwriter.write("Width " + image.getWidth() + "\n"); 
@@ -165,16 +175,17 @@ public class RunLengthBitmapConverter extends JPanel{
       }
       bwriter.write(consec + ","); //the last value of consec does not write to file unless there is some character after it...(?)
       bwriter.close();
+      return output;
     } catch(IOException e) {
       System.out.println("Unable to output to file: " + e.getMessage());
       System.exit(1);
     }
-    return outputfile;
+    return null;
   }
-  private static Color switchColor(Color orig) {
-    if(orig.equals(Color.BLACK)) {
-      return new Color(255,255,255);
-    }
-    return new Color(0,0,0);
+  
+  public static int[] rgbArray(BufferedImage image) {
+    int[] rgbArray = new int[image.getWidth()*image.getHeight()];
+    image.getRGB(0,0,image.getWidth(),image.getHeight(),rgbArray,0,image.getWidth());
+    return rgbArray;
   }
 }
