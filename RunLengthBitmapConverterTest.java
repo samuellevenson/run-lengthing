@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
  * Test class for RunLengthBitmapConverter
  * 
  * @author Samuel Levenson
+ * 
  * @version 10/11
  */
 public class RunLengthBitmapConverterTest extends TestCase{
@@ -20,37 +21,36 @@ public class RunLengthBitmapConverterTest extends TestCase{
     System.out.println(rgbArray[0]);
     System.out.println(image.getRGB(1,0));
   }
-  
+
   public void testReadRunLength() {
     BufferedImage image = null;
     try {
-      // Use relative path names so the tests will work on other computers: "testImages/dog.bmp"
-      image = ImageIO.read(new File("/Users/sammy/Documents/compsi/compsci12th/testImages/dog.bmp"));
+      image = ImageIO.read(new File("dog.bmp"));
     } catch (IOException e) {
       System.exit(1);
     }
-    assertEquals(RunLengthBitmapConverter.readRunLength(new File("/Users/sammy/Documents/compsi/compsci12th/testImages/dog.runlength.txt")),image);
+    assertEquals(RunLengthBitmapConverter.readRunLength(new File("dog.runlength.txt")),image);
   }
-  
+
   public void testWriteBitmap() {
     BufferedImage image = null;
     try {
-      image = ImageIO.read(new File("/Users/sammy/Documents/compsi/compsci12th/testImages/dog.bmp"));
+      image = ImageIO.read(new File("dog.bmp"));
     } catch (IOException e) {
       System.exit(1);
     }
-    File output = new File("/Users/sammy/Documents/compsi/compsci12th/testImages/dog.bmp");
+    File output = new File("dog.bmp");
     assertEquals(RunLengthBitmapConverter.writeBitmap(output,image),output);
   }
-  
+
   public void testWriteRunLength() {
     BufferedImage image = null;
     try {
-      image = ImageIO.read(new File("/Users/sammy/Documents/compsi/compsci12th/testImages/dog.bmp"));
+      image = ImageIO.read(new File("dog.bmp"));
     } catch (IOException e) {
       System.exit(1);
     }
-    assertEquals(RunLengthBitmapConverter.writeRunLength(new File("/Users/sammy/Documents/compsi/compsci12th/testImages/dog.bmp"),image),
-                 new File("/Users/sammy/Documents/compsi/compsci12th/testImages/dog.runlength.txt"));
+    assertEquals(RunLengthBitmapConverter.writeRunLength(new File("dog.bmp"),image),
+                 new File("dog.runlength.txt"));
   }
 }
