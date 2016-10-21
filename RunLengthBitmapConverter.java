@@ -18,19 +18,20 @@ import javax.swing.JPanel;
  * 
  * @author Samuel Levenson
  * 
- * @version 10/11: 
- * Created method for displaying image
- * Created method for reading runlength file
- * Created methods for writing to bitmap and runlength file
- * Can now handle relative file names if file is in the same directory
+ * @version 10/19: 
+ * added method javadocs
  * 
  */
 public class RunLengthBitmapConverter extends JPanel{
+  /**
+   * if not given a file as a command line argument, opens a jfilechooser window to let the user select a file
+   * figures out if the file is a .bmp image, a .txt text file, or neither
+   */
   public static void main(String[] args) {
     File filepath = null;
     if(args.length == 0) {      
       JFileChooser fileChooser = new JFileChooser();
-      int choice = fileChooser.showOpenDialog(null); //not entirely sure what should be in place of null
+      int choice = fileChooser.showOpenDialog(null);
       if(choice == JFileChooser.APPROVE_OPTION) {
         filepath = fileChooser.getSelectedFile();
       }
@@ -58,6 +59,9 @@ public class RunLengthBitmapConverter extends JPanel{
     }
   }
   
+  /**
+   * given a text file containing the run length encooding, sends file to other methods to be converted to a bufferedimage, written to a file, and displayed
+   */
   public static File convertToBitmap(File inputfile) {
     BufferedImage image = readRunLength(inputfile);
     File outputfile = new File(inputfile.getParent(), inputfile.getName().replace(".txt",".bmp"));
@@ -65,7 +69,9 @@ public class RunLengthBitmapConverter extends JPanel{
     showImage(image);
     return outputfile;
   }
-  
+  /**
+   * given a file containing an bmp image, reads the file and sends it to other methods to be displayed, turned into a run length encoding, and written to a text file
+   */
   public static File convertToRunLength(File inputfile) {
     BufferedImage image = null;
     
@@ -89,13 +95,20 @@ public class RunLengthBitmapConverter extends JPanel{
     writeRunLength(inputfile, image);
       return outputfile;
   }
+  
+  /**
+   * returns black if input color is white, returns white if input color is black
+   */
   private static Color switchColor(Color orig) {
     if(orig.equals(Color.BLACK)) {
-      return new Color(255,255,255); // why not return Color.WHITE (instead of creating new color object)
+      return new Color(255,255,255);
     }
-    return new Color(0,0,0); // Color.BLACK
+    return new Color(0,0,0);
   }
   
+  /**
+   * displays the given image in a jframe
+   */
   private static void showImage(BufferedImage image) {
     JFrame imgframe = new JFrame();
     imgframe.getContentPane().add(new JLabel(new ImageIcon(image)));
@@ -103,6 +116,9 @@ public class RunLengthBitmapConverter extends JPanel{
     imgframe.setVisible(true);
   }
   
+  /**
+   * takes a file containing the run length encoding of a black and white image and returns the apropriate bufferedimage
+   */
   public static BufferedImage readRunLength(File runlength) {
     try {
       Scanner input = new Scanner(runlength);
@@ -139,7 +155,9 @@ public class RunLengthBitmapConverter extends JPanel{
     }
     return null;
   }
-  
+  /**
+   * given a bufferedimage and an empty file, writes the bufferedimage to the file and returns the file it wrote to (the same one it was given)
+   */
   public static File writeBitmap(File output, BufferedImage image) {
     try {
       output.createNewFile();
@@ -147,12 +165,13 @@ public class RunLengthBitmapConverter extends JPanel{
       return output;
     } catch (IOException e) {
       System.out.println("Unable to create image: " + e.getMessage());
-      e.printStackTrace();
       System.exit(1);
     }
     return null;
   }
-  
+  /**
+   * given a bufferediamge and the file it was read from and writes the run length encoding of the image to a new file, returns the file it wrote to
+   */
   public static File writeRunLength(File input, BufferedImage image) {
     int[] rgbArray = rgbArray(image);
     
@@ -179,12 +198,13 @@ public class RunLengthBitmapConverter extends JPanel{
       return output;
     } catch(IOException e) {
       System.out.println("Unable to output to file: " + e.getMessage());
-      e.printStackTrace();
       System.exit(1);
     }
     return null;
   }
-  
+  /**
+   * given a bufferedimage, returns an array storing the rgb values of the pixels, in row major order, starting from the bottom right
+   */
   public static int[] rgbArray(BufferedImage image) {
     int[] rgbArray = new int[image.getWidth()*image.getHeight()];
     image.getRGB(0,0,image.getWidth(),image.getHeight(),rgbArray,0,image.getWidth());
